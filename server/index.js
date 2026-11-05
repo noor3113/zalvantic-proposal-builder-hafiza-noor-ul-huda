@@ -7,6 +7,8 @@ const mongoose = require('mongoose');
 const crudRouter = require('./src/routes/crud');
 const Package = require('./src/models/Package');
 const AddOn = require('./src/models/AddOn');
+const authRouter = require('./src/routes/auth');
+const { adminWrites } = require('./src/middleware/auth');
 
 const app = express();
 app.use(express.json());
@@ -15,8 +17,9 @@ app.get('/', (req, res) => {
   res.send('Server is running');
 });
 
-app.use('/api/packages', crudRouter(Package));
-app.use('/api/addons', crudRouter(AddOn));
+app.use('/api/auth', authRouter);
+app.use('/api/packages', adminWrites, crudRouter(Package));
+app.use('/api/addons', adminWrites, crudRouter(AddOn));
 
 const PORT = 5000;
 
