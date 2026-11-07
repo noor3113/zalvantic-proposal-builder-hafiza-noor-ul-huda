@@ -3,6 +3,7 @@ dns.setServers(['8.8.8.8', '1.1.1.1']);
 
 require('dotenv').config();
 const express = require('express');
+const cors = require('cors');
 const mongoose = require('mongoose');
 const crudRouter = require('./src/routes/crud');
 const Package = require('./src/models/Package');
@@ -12,6 +13,7 @@ const { adminWrites } = require('./src/middleware/auth');
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 app.get('/', (req, res) => {
   res.send('Server is running');
