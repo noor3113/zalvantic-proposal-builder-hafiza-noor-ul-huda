@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import QuoteWizard from './wizard/QuoteWizard';
 
 const API = 'http://localhost:5000/api';
 const emptyForm = { name: '', basePrice: '', currency: 'USD', includes: '' };
@@ -11,6 +12,7 @@ export default function App() {
   const [packages, setPackages] = useState([]);
   const [form, setForm] = useState(emptyForm);
   const [editingId, setEditingId] = useState(null);
+  const [view, setView] = useState('packages');
 
   const authHeaders = {
     'Content-Type': 'application/json',
@@ -107,11 +109,27 @@ export default function App() {
     );
   }
 
+  if (view === 'quotes') {
+    return (
+      <div style={{ maxWidth: 800, margin: '30px auto', fontFamily: 'sans-serif' }}>
+        <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+          <button onClick={() => setView('packages')}>Packages</button>
+          <button disabled>Quotes</button>
+          <button onClick={logout} style={{ marginLeft: 'auto' }}>Logout</button>
+        </div>
+        <QuoteWizard token={token} onUnauthorized={logout} />
+      </div>
+    );
+  }
+
   return (
     <div style={{ maxWidth: 800, margin: '30px auto', fontFamily: 'sans-serif' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <h2>Packages</h2>
-        <button onClick={logout}>Logout</button>
+        <span>
+          <button onClick={() => setView('quotes')}>Quotes</button>{' '}
+          <button onClick={logout}>Logout</button>
+        </span>
       </div>
 
       <form onSubmit={save} style={{ display: 'grid', gap: 8, marginBottom: 24 }}>
