@@ -34,6 +34,7 @@ Open http://localhost:5173 and log in with the admin account.
 Admin can start a quote, fill it in 3 steps (client details, packages and add-ons, options), review it and submit it. Every step is validated with Zod on the client and again on the server. A quote is saved as a draft after each step, so it can be resumed later from the quotes list.
 
 Server routes (admin only): `POST /api/quotes`, `GET /api/quotes`, `GET /api/quotes/:id`, `PUT /api/quotes/:id/steps/:n`, `POST /api/quotes/:id/submit`.
+
 Note: this project uses JavaScript (not TypeScript). The price calculation is added in Week 3.
 
 ## Learning log
