@@ -9,7 +9,8 @@ const crudRouter = require('./src/routes/crud');
 const Package = require('./src/models/Package');
 const AddOn = require('./src/models/AddOn');
 const authRouter = require('./src/routes/auth');
-const { adminWrites } = require('./src/middleware/auth');
+const { adminWrites, requireAuth, requireAdmin } = require('./src/middleware/auth');
+const quotesRouter = require('./src/routes/quotes');
 
 const app = express();
 app.use(express.json());
@@ -22,6 +23,7 @@ app.get('/', (req, res) => {
 app.use('/api/auth', authRouter);
 app.use('/api/packages', adminWrites, crudRouter(Package));
 app.use('/api/addons', adminWrites, crudRouter(AddOn));
+app.use('/api/quotes', requireAuth, requireAdmin, quotesRouter);
 
 const PORT = 5000;
 
