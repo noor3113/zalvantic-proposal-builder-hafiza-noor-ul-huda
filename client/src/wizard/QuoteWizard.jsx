@@ -41,6 +41,17 @@ export default function QuoteWizard({ token, onUnauthorized }) {
   const [errors, setErrors] = useState({});
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState(false);
+  const [price, setPrice] = useState(null);
+  const [priceError, setPriceError] = useState('');
+
+useEffect(() => {
+  if (!quote || step !== 4) return;
+  setPrice(null);
+  setPriceError('');
+  api(`/quotes/${quote._id}/price`)
+    .then(setPrice)
+    .catch((e) => setPriceError(e.message));
+}, [step, quote?._id]);
 
   const headers = {
     'Content-Type': 'application/json',
@@ -359,8 +370,23 @@ export default function QuoteWizard({ token, onUnauthorized }) {
               </ul>
               <p><b>Currency:</b> {data.currency} | <b>Rush:</b> {data.rush ? 'Yes' : 'No'}</p>
               {data.notes && <p><b>Notes:</b> {data.notes}</p>}
-              <p><i>The price is calculated in Week 3.</i></p>
-            </div>
+{priceError && <p style={{ color: 'crimson' }}>{priceError}</p>}
+{price && (
+  <table border="1" cellPadding="6" style={{ borderCollapse: 'collapse' }}>
+    <tbody>
+      <tr><td>Subtotal</td><td>{price.subtotal} USD</td></tr>
+      {price.rushFee > 0 && (
+        <tr><td>Rush fee (25%)</td><td>{price.rushFee} USD</td></tr>
+      )}
+      <tr><td>Total in USD</td><td>{price.totalUSD} USD</td></tr>
+      <tr>
+        <td><b>Total in {price.currency}</b></td>
+        <td><b>{price.total} {price.currency}</b></td>
+      </tr>
+    </tbody>
+  </table>
+)}
+<p><i>Prices are calculated on the server.</i></p>            </div>
           )}
         </div>
       </fieldset>
