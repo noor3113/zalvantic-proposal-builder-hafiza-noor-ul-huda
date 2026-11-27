@@ -1,8 +1,25 @@
 import { useEffect, useState } from 'react';
 import QuoteWizard from './wizard/QuoteWizard';
+import ProposalEditor from './components/ProposalEditor';
 
 const API = 'http://localhost:5000/api';
 const emptyForm = { name: '', basePrice: '', currency: 'USD', includes: '' };
+
+function Nav({ view, setView, logout }) {
+  const tab = (name, label) => (
+    <button disabled={view === name} onClick={() => setView(name)}>
+      {label}
+    </button>
+  );
+  return (
+    <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+      {tab('packages', 'Packages')}
+      {tab('quotes', 'Quotes')}
+      {tab('proposals', 'Proposals')}
+      <button onClick={logout} style={{ marginLeft: 'auto' }}>Logout</button>
+    </div>
+  );
+}
 
 export default function App() {
   const [token, setToken] = useState(localStorage.getItem('token') || '');
@@ -112,25 +129,25 @@ export default function App() {
   if (view === 'quotes') {
     return (
       <div style={{ maxWidth: 800, margin: '30px auto', fontFamily: 'sans-serif' }}>
-        <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
-          <button onClick={() => setView('packages')}>Packages</button>
-          <button disabled>Quotes</button>
-          <button onClick={logout} style={{ marginLeft: 'auto' }}>Logout</button>
-        </div>
+        <Nav view={view} setView={setView} logout={logout} />
         <QuoteWizard token={token} onUnauthorized={logout} />
+      </div>
+    );
+  }
+
+  if (view === 'proposals') {
+    return (
+      <div style={{ maxWidth: 1100, margin: '30px auto', fontFamily: 'sans-serif' }}>
+        <Nav view={view} setView={setView} logout={logout} />
+        <ProposalEditor token={token} onUnauthorized={logout} />
       </div>
     );
   }
 
   return (
     <div style={{ maxWidth: 800, margin: '30px auto', fontFamily: 'sans-serif' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <h2>Packages</h2>
-        <span>
-          <button onClick={() => setView('quotes')}>Quotes</button>{' '}
-          <button onClick={logout}>Logout</button>
-        </span>
-      </div>
+      <Nav view={view} setView={setView} logout={logout} />
+      <h2>Packages</h2>
 
       <form onSubmit={save} style={{ display: 'grid', gap: 8, marginBottom: 24 }}>
         <input placeholder="Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
